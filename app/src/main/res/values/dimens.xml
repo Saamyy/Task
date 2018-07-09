@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="cars_name_year_text_size_margin_top">25dp</dimen>
+    <dimen name="cars_data_padding">10dp</dimen>
+    <dimen name="cars_price_text_size">25dp</dimen>
+    <dimen name="lot_number_bids_left_time_text_size">16dp</dimen>
+    <dimen name="cars_item_last_section_bottom_padding">20dp</dimen>
+    <dimen name="cars_price_currency_top_margin">10dp</dimen>
+    <dimen name="cars_item_last_section_top_margin">15dp</dimen>
+    <dimen name="cars_name_left_margin">150dp</dimen>
+
+</resources>
