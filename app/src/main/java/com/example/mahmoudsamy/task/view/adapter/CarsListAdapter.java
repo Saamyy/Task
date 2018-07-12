@@ -1,9 +1,11 @@
 package com.example.mahmoudsamy.task.view.adapter;
 
 import android.graphics.Color;
+import android.os.CountDownTimer;
 import android.os.Handler;
 import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
+import android.text.TextUtils;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,10 +19,10 @@ import com.example.mahmoudsamy.task.view.listeners.OnLoadMoreListener;
 import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Date;
 import java.util.List;
-import java.util.concurrent.TimeUnit;
+import java.util.Locale;
+
+import cn.iwgang.countdownview.CountdownView;
 
 public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder> {
 
@@ -31,6 +33,9 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     private ArrayList<Cars> carsList;
     private OnLoadMoreListener onLoadMoreListener;
     private boolean isMoreLoading = true;
+    private boolean isLeftToRight;
+    private CountDownTimer timeLefCountDownTimer;
+
 
     public class ProgressViewHolder extends RecyclerView.ViewHolder {
         public ProgressBar progressBar;
@@ -52,7 +57,9 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         private TextView bidsTittle;
         private TextView bidsValue;
         private TextView timeLeftTittleTittle;
-        private TextView timeLeftValue;
+        private CountdownView timeLeftValue;
+        private CountdownView timeLeftValueRed;
+
 
         public CarViewHolder(View view) {
             super(view);
@@ -67,8 +74,12 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
             bidsValue = view.findViewById(R.id.bids_value);
             timeLeftTittleTittle = view.findViewById(R.id.time_left_tittle_tittle);
             timeLeftValue = view.findViewById(R.id.time_left_value);
+            timeLeftValueRed = view.findViewById(R.id.time_left_value_red);
+
 
         }
+
+
     }
 
 
@@ -76,7 +87,6 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         this.onLoadMoreListener = onLoadMoreListener;
         carsList = new ArrayList<>();
     }
-
 
 
     @Override
@@ -102,40 +112,60 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
         }
     }
 
-    private void setCarData(Cars singleCar, RecyclerView.ViewHolder holder) {
-        CarViewHolder carViewHolder = (CarViewHolder) holder;
+    private void setCarData(final Cars singleCar, final RecyclerView.ViewHolder holder) {
+
+        final CarViewHolder carViewHolder = (CarViewHolder) holder;
         Picasso.get().load(handleImageUrl(singleCar.getImage())).into(carViewHolder.carImage);
-        carViewHolder.carsNameYear.setText(singleCar.getMakeEn() + " " + singleCar.getModelEn() + " " + singleCar.getYear());
+        isLeftToRight = TextUtils.getLayoutDirectionFromLocale(Locale.getDefault()) == View.LAYOUT_DIRECTION_LTR;
+        if (isLeftToRight) {
+            handleLeftToRightViews(singleCar, carViewHolder);
+
+        } else {
+            handleRightToLeftViews(singleCar, carViewHolder);
+
+        }
         carViewHolder.carPrice.setText(singleCar.getAuctionInfo().getCurrentPrice());
-        carViewHolder.carCurrency.setText(singleCar.getAuctionInfo().getCurrencyEn());
         carViewHolder.lotNumberValue.setText(singleCar.getAuctionInfo().getLot());
         carViewHolder.bidsValue.setText(singleCar.getAuctionInfo().getBids());
-        String timeLeft = formatData(getDaysBetweenTwoDates(new Date(singleCar.getAuctionInfo().getEndDate()),
-                Calendar.getInstance().getTime()));
-        if (timeLeft.startsWith("00")) {
-            carViewHolder.timeLeftValue.setTextColor(Color.RED);
-        }
-        carViewHolder.timeLeftValue.setText(timeLeft);
+        carViewHolder.timeLeftValue.start(singleCar.getAuctionInfo().getEndDate().intValue()*1000);// Millisecond
+        carViewHolder.timeLeftValue.setOnCountdownIntervalListener(singleCar.getAuctionInfo().getEndDate().intValue() * 1000, new CountdownView.OnCountdownIntervalListener() {
+            @Override
+            public void onInterval(CountdownView cv, long remainTime) {
+                int minutes = (int) ((remainTime / (1000 * 60)) % 60);
+                int hours = (int) ((remainTime / (1000 * 60 * 60)) % 24);
+
+                if ((hours == 0) && (minutes < 5)) {
+                    carViewHolder.timeLeftValueRed.start(singleCar.getAuctionInfo().getEndDate().intValue()*1000);
+                    carViewHolder.timeLeftValue.setVisibility(View.GONE);
+                    carViewHolder.timeLeftValueRed.setVisibility(View.VISIBLE);
+
+                }else{
+                    carViewHolder.timeLeftValue.setVisibility(View.VISIBLE);
+                    carViewHolder.timeLeftValueRed.setVisibility(View.GONE);
+                }
+            }
+        });
     }
+
+
+
+    private void handleLeftToRightViews(Cars singleCar, CarViewHolder carViewHolder) {
+        carViewHolder.carsNameYear.setText(singleCar.getMakeEn() + " " + singleCar.getModelEn() + " " + singleCar.getYear());
+        carViewHolder.carCurrency.setText(singleCar.getAuctionInfo().getCurrencyEn());
+    }
+
+    private void handleRightToLeftViews(Cars singleCar, CarViewHolder carViewHolder) {
+        carViewHolder.carsNameYear.setText(singleCar.getMakeAr() + " " + singleCar.getModelAr() + " " + singleCar.getYear());
+        carViewHolder.carCurrency.setText(singleCar.getAuctionInfo().getCurrencyAr());
+    }
+
+
 
     private String handleImageUrl(String url) {
-        String finalUrl = url.replace("[w]", imageWidth).replace("[h]", imageHight);;
+        String finalUrl = url.replace("[w]", imageWidth).replace("[h]", imageHight);
+        ;
         return finalUrl;
     }
-
-    private String formatData(long millis) {
-        String hms = String.format("%02d:%02d:%02d", TimeUnit.MILLISECONDS.toHours(millis),
-                TimeUnit.MILLISECONDS.toMinutes(millis) - TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
-                TimeUnit.MILLISECONDS.toSeconds(millis) - TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis)));
-        return hms;
-    }
-
-    private long getDaysBetweenTwoDates(Date startDate, Date endDate) {
-
-        return TimeUnit.MILLISECONDS.toDays(endDate.getTime() - startDate.getTime());
-
-    }
-
 
     public void showLoading() {
         if (isMoreLoading && carsList != null && onLoadMoreListener != null) {
@@ -165,18 +195,15 @@ public class CarsListAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolde
     public void addAll(List<Cars> lst) {
         carsList.clear();
         carsList.addAll(lst);
-        notifyDataSetChanged();
     }
 
     public void addItemMore(List<Cars> lst) {
         int sizeInit = carsList.size();
+
         carsList.addAll(lst);
-        notifyItemRangeChanged(sizeInit, carsList.size());
+        notifyItemRangeChanged(sizeInit, carsList.size()-1);
     }
 
-    public void clearAll() {
-        carsList.clear();
-    }
 
     @Override
     public int getItemCount() {

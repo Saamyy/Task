@@ -1,11 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="colorPrimary">#3F51B5</color>
-    <color name="colorPrimaryDark">#303F9F</color>
+    <color name="colorPrimary">#E44F51</color>
+    <color name="colorPrimaryDark">#E44F51</color>
     <color name="colorAccent">#FF4081</color>
     <color name="white">#d6cccc</color>
     <color name="green">#69ed5d</color>
     <color name="grey">#83848f</color>
+    <color name="primaryColor">#3F51B5</color>
+    <color name="primaryColorDark">#303F9F</color>
+    <color name="tool_bar_color">#E44F51</color>
+    <color name="red">#ce1416</color>
+
 
 
 </resources>

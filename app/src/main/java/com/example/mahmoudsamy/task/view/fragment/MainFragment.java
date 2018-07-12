@@ -1,6 +1,8 @@
 package com.example.mahmoudsamy.task.view.fragment;
 
 
+import android.graphics.Color;
+import android.graphics.PorterDuff;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Looper;
@@ -8,10 +10,15 @@ import android.support.v4.app.Fragment;
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.support.v7.widget.Toolbar;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.FrameLayout;
+import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.mahmoudsamy.task.R;
@@ -32,6 +39,13 @@ public class MainFragment extends Fragment implements IMainFragment, OnLoadMoreL
     private RecyclerView mRecyclerView;
     private CarsListAdapter mAdapter;
     private SwipeRefreshLayout swipeRefresh;
+    private FrameLayout toolbarContainer;
+    private Toolbar generalToolbar;
+    private LinearLayout filter;
+    private LinearLayout sort;
+    private LinearLayout GridView;
+    private TextView title;
+
 
     private List<Cars> carsList;
 
@@ -62,6 +76,24 @@ public class MainFragment extends Fragment implements IMainFragment, OnLoadMoreL
         mainLoading = view.findViewById(R.id.mainLoading);
         swipeRefresh = view.findViewById(R.id.swipeRefresh);
         mRecyclerView = view.findViewById(R.id.cars_list);
+        toolbarContainer = view.findViewById(R.id.tool_bar_container);
+        generalToolbar = toolbarContainer.findViewById(R.id.generalToolbar);
+        generalToolbar.getNavigationIcon().setColorFilter(Color.WHITE, PorterDuff.Mode.SRC_IN);
+
+        generalToolbar.setNavigationOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // back button pressed
+                getActivity().finish();
+            }
+        });
+        title = toolbarContainer.findViewById(R.id.title);
+        title.setText("Cars & Machinery");
+        filter = toolbarContainer.findViewById(R.id.filter);
+        sort = toolbarContainer.findViewById(R.id.sort);
+        GridView = toolbarContainer.findViewById(R.id.Grid_view);
+
+
     }
 
     private void configurePresenter() {
@@ -104,6 +136,7 @@ public class MainFragment extends Fragment implements IMainFragment, OnLoadMoreL
 
     @Override
     public void hideLoading() {
+
         mainLoading.setVisibility(View.GONE);
     }
 
@@ -117,7 +150,6 @@ public class MainFragment extends Fragment implements IMainFragment, OnLoadMoreL
             carsList.add(cars.get(i));
         }
         mAdapter.dismissLoading();
-        mAdapter.clearAll();
         mAdapter.addAll(carsList);
 
     }

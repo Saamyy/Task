@@ -2,8 +2,22 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:layout_marginTop="10dp"
     android:orientation="vertical">
+
+    <include
+        android:id="@+id/tool_bar_container"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        layout="@layout/custome_toolbar" />
+
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/scroll_down_to_refresh"
+        android:textColor="@color/grey"
+        android:layout_marginBottom="@dimen/scroll_down_margin_bottom"
+        android:gravity="center"/>
+
     <ProgressBar
         android:id="@+id/mainLoading"
         android:layout_width="wrap_content"

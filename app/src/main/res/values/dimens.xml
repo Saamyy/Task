@@ -8,5 +8,10 @@
     <dimen name="cars_price_currency_top_margin">10dp</dimen>
     <dimen name="cars_item_last_section_top_margin">15dp</dimen>
     <dimen name="cars_name_left_margin">150dp</dimen>
+    <dimen name="activity_horizontal_margin">16dp</dimen>
+    <dimen name="activity_vertical_margin">16dp</dimen>
+    <dimen name="toolbar_double_height">80dp</dimen>
+    <dimen name="cardview_toolbar_spacer">32dp</dimen>
+    <dimen name="scroll_down_margin_bottom">10dp</dimen>
 
 </resources>

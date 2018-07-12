@@ -9,7 +9,10 @@
     <string name="netwrokError">someThing went wrong please try again later</string>
     <string name="noNetwrok">Looks like you are offline </string>
     <string name="noItemsLeft">o more items </string>
-
+    <string name="action_search">Search</string>
+    <string name="scroll_down_to_refresh">swipe down to refresh</string>
+    <string name="filter">Filter</string>
+    <string name="sort">Sort</string>
 
 
 </resources>
